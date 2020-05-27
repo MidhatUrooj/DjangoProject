@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+
+<style>
+.quiz-wrapper {
+  position: relative;
+  display: block;
+  width: 510px;
+  height: 450px;
+}
+.quiz-wrapper p.question-description {
+  background: #19286C;
+  color: white;
+  padding: 25px 20px;
+}
+.quiz-wrapper ul.options {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 165px;
+  list-style: none;
+  border: 1px solid #19286C;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.quiz-wrapper ul.options li {
+  border: 1px solid transparent;
+  padding: 6px 8px;
+}
+.quiz-wrapper ul.options li.title {
+  background: #19286C;
+  color: white;
+}
+.quiz-wrapper ul.options li.option {
+  display: block;
+  position: relative;
+  z-index: 50;
+  font-size: 13px;
+}
+.quiz-wrapper .answers {
+  display: inline-block;
+  width: 335px;
+  font-size: 13px;
+  line-height: 20px;
+}
+.quiz-wrapper .answers .target {
+  display: inline-block;
+  width: 110px;
+  background: lightblue;
+  margin: 0 3px;
+  text-align: center;
+}
+.quiz-wrapper button[type="submit"] {
+  display: block;
+  position: relative;
+  margin: 10px auto;
+  padding: 10px;
+  background: #19286C;
+  border: none;
+  color: white;
+  font-size: 16px;
+}
+.lightbox-bg {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+.status {
+  display: none;
+  position: absolute;
+  z-index: 110;
+  text-align: center;
+  width: 80%;
+  top: 220px;
+  left: 47px;
+}
+.status p {
+  background: white;
+  padding: 30px;
+}
+</style>
+<h2>{{ topicnames }}</h2> <hr/>
+<div class="col-sm-7 mx-5">
+<h3>Blanks: </h3> <hr/>
+
+
+
+<body>
+<html lang="en" >
+
+<head>
+<meta charset="UTF-8">
+<title>Drag and Drop Quiz</title>
+<link rel='stylesheet prefetch' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+
+<body>
+
+{% if blanks %}  
+  <div class="quiz-wrapper">
+	<p class="question-description">Fill in the blanks by dragging the missing answer.</p>
+	<ul class="options">
+		<li class="title">Options</li>
+    {% for blanker in blanks %}
+		    <li class="option" data-target={{blanker.id}}>{{blanker.blankanswer}}</li>
+    {% endfor %}
+		      
+	</ul>
+  <div class="answers">
+  {% for blanker in blanks %}
+	     <ol>
+		      <li><span class="target" data-accept={{blanker.id}}>&nbsp;</span>, {{blanker.blank}}</li>
+		
+	     </ol>
+  {% endfor %}
+  </div>
+  <button type="submit" value="submit">Submit</button>
+  <div class="lightbox-bg"></div>
+  <div class="status confirm">
+   <p>All Answers Answered</p>
+   <p class="text-info"><a href = "{% url 'quize:index' %}" >Back to dashboard</a></p>
+  </div>
+  <div class="status deny">
+   <p>Answers Remain</p>
+  </div>
+  </div>
+{% else %}
+    <p>There are no blanks of this topic {{topicname}}</p>
+{% endif %} 
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
+</body>
+<script>
+/*Downloaded from https://www.codeseek.co/cgspicer/drag-and-drop-quiz-ahnHi */
+/**
+* Drag and drop quiz intended for an iBooks widget
+*/
+
+$(document).ready( function() {
+  //initialize the quiz options
+  var answersLeft = [];
+  $('.quiz-wrapper').find('li.option').each( function(i) {
+    var $this = $(this);
+    var answerValue = $this.data('target');
+    var $target = $('.answers .target[data-accept="'+answerValue+'"]');
+    var labelText = $this.html();
+    $this.draggable( {
+      revert: "invalid",
+      containment: ".quiz-wrapper"
+    });
+   
+    if ( $target.length > 0 ) {
+    $target.droppable( {
+        accept: 'li.option[data-target="'+answerValue+'"]',
+        drop: function( event, ui ) {
+          $this.draggable('destroy');
+          $target.droppable('destroy');
+          $this.html('&nbsp;');
+          $target.html(labelText);
+          answersLeft.splice( answersLeft.indexOf( answerValue ), 1 );
+        }
+    });
+    answersLeft.push(answerValue);
+    } else { }
+   });
+   $('.quiz-wrapper button[type="submit"]').click( function() {
+	   if ( answersLeft.length > 0 ) {
+		    $('.lightbox-bg').show();
+      $('.status.deny').show();
+      $('.lightbox-bg').click( function() {
+		      $('.lightbox-bg').hide();
+        $('.status.deny').hide();
+        $('.lightbox-bg').unbind('click');
+      });
+	   } else {
+		    $('.lightbox-bg').show();
+      $('.status.confirm').show();
+	   }
+   });
+});
+</script>
+
+</html>

@@ -1,0 +1,24 @@
+{% extends "catalog/base_generic.html" %}
+
+{% block content %}
+<div class="col-sm-7 mx-5">
+  <h2>Courses</h2>
+  <h3>Genre: {{name}} </h3> <hr/>
+  {% if Books %}
+
+    {% for book in Books %}
+        <p class="text-info"><a href="{% url 'catalog:book-detail' book.id %}">{{book}}</a></p><hr/>
+    {% endfor %}
+
+  {% else %}
+    <p>There are no Courses of genre {{name}}</p>
+  {% endif %}   
+
+</div>  
+  
+{% endblock %}
+
+def detail(request,name):
+    Books = Book.objects.filter(genre__name=name)
+    context = {'Books':Books,'name':name}
+    return render(request , 'catalog/bookgenre.html',context)

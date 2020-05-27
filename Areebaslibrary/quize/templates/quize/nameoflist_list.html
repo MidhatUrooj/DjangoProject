@@ -1,0 +1,17 @@
+{% extends "catalog/base_generic.html" %}
+{% block content %}
+
+<div class="col-sm-7 mx-5">
+  <h2>All Arranging and sorting List</h2> <hr/>
+
+  {% if nameoflist_list %}
+    {% for topic in nameoflist_list %}
+      <p class="text-info"><a href="{% url 'quize:list-detail' topic.id %}">{{topic.nameoflist }} </a></p> <hr/>
+      
+    {% endfor %}
+  {% else %}
+    <p>No topic</p>
+  {% endif %}       
+  
+{% endblock %}
+<!--<a href="{% url 'catalog:book-detail' book.id %}">-->
